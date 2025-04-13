@@ -50,3 +50,7 @@ rsconnect/
 
 # Custom attributes in MacOS folder
 .DS_Store
+
+# Ignore all Office temporary files
+~$*
+
