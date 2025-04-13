@@ -1,0 +1,28 @@
+---
+title: "Contraception report"
+author: Darwin Del Castillo & Natalia Valverde
+format: docx
+editor: source
+editor_options:
+  chunk_output_type: console
+---
+```{r setup}
+#| name: setup
+#| include: false
+#| warning: false
+knitr::opts_chunk$set(echo = FALSE, comment = "", results = 'asis')
+options(scipen = 999999)
+```
+
+```{r}
+#| name: packages
+#| include: false
+```
+
+
+```{r}
+#| name: data cleaning
+#| include: false
+#| warning: false
+source("code/data_cleaning.R")
+```
