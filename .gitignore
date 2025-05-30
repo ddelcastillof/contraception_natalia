@@ -54,3 +54,8 @@ rsconnect/
 # Ignore all Office temporary files
 ~$*
 
+# Ignore files in data folder
+data/*
+
+# Ignore all Rproject files
+*.Rproj
