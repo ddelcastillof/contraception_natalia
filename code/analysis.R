@@ -30,10 +30,10 @@ tabla_1 <- tbl_svysummary(data = data_survey,
                 "etnia_identificador", "etnia", "post_aborto_anticoncep",
                 "limitacion_economica", "aborto_busco_ayuda", "plan_familiar_ident",
                 "pre_aborto_anticoncep", "serv_plani_fam", "atencion_calidad", 
-                "establecimiento_tipo", "problema_atencion"), # variables relevantes
+                "establecimiento_tipo", "problema_atencion", "consejeria_aborto"), # variables relevantes
     missing = "no",
     statistic = list(all_continuous() ~ "{mean} ± {sd}",
-                     all_categorical() ~ "{n_unweighted} ({p}%)"),
+                     all_categorical() ~ "{n_unweighted} ({p_unweighted}%)"),
     digits = list(all_continuous() ~ c(1, 1),
                   all_categorical() ~ c(0, 1, 1, 1)),
     label = list(edad ~ "Edad",
@@ -47,6 +47,7 @@ tabla_1 <- tbl_svysummary(data = data_survey,
                  limitacion_economica ~ "Limitaciones económicas",
                  aborto_busco_ayuda ~ "Buscó ayuda después del aborto",
                  plan_familiar_ident ~ "Uso de método de planificación familiar",
+                 consejeria_aborto ~ "Recibió consejería post-aborto",
                  serv_plani_fam ~ "Servicio de planificación familiar",
                  atencion_calidad ~ "Atención de calidad",
                  establecimiento_tipo ~ "Tipo de establecimiento",
@@ -70,7 +71,7 @@ tabla_1 <- tbl_svysummary(data = data_survey,
     stat_3 ~ "**Yarowilca (n = {n_unweighted})**"
   ) |>
   modify_footnote(
-    c(stat_0, stat_1, stat_2, stat_3) ~ "DE y % ajustados por diseño muestral.",
+    c(stat_0, stat_1, stat_2, stat_3) ~ "Porcentajes no ponderados poir diseño muestral.",
     p.value ~ "Prueba de Kruskal-Wallis ajustado por diseño muestral para variables continuas; Prueba de chi cuadrado con corrección de segundo orden de Rao y Scott.",
   )
 
