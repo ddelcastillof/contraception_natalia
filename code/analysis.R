@@ -71,7 +71,7 @@ tabla_1 <- tbl_svysummary(data = data_survey,
     stat_3 ~ "**Yarowilca (n = {n_unweighted})**"
   ) |>
   modify_footnote(
-    c(stat_0, stat_1, stat_2, stat_3) ~ "Porcentajes no ponderados poir diseño muestral.",
+    c(stat_0, stat_1, stat_2, stat_3) ~ "Porcentajes no ponderados por diseño muestral.",
     p.value ~ "Prueba de Kruskal-Wallis ajustado por diseño muestral para variables continuas; Prueba de chi cuadrado con corrección de segundo orden de Rao y Scott.",
   )
 
@@ -95,8 +95,8 @@ exp(confint.default(fit_svy_zero))
 
 # 2.2. Fit multivariate Poisson models:
 model_1 <- svyglm(
-  as.numeric(post_aborto_anticoncep) ~ 
-    edad,
+  as.numeric(post_aborto_anticoncep) ~
+    estado_civil,
   design = data_survey,
   family = poisson(link="log")
 )
@@ -105,9 +105,9 @@ exp(coef(model_1))
 exp(confint.default(model_1))
 
 model_2 <- svyglm(
-  as.numeric(post_aborto_anticoncep) ~
+  as.numeric(post_aborto_anticoncep) ~ 
     estado_civil +
-    edad,
+    plan_familiar_ident,
   design = data_survey,
   family = poisson(link="log")
 )
@@ -118,8 +118,8 @@ exp(confint.default(model_2))
 model_3 <- svyglm(
   as.numeric(post_aborto_anticoncep) ~ 
     estado_civil +
-    edad +
-    plan_familiar_ident,
+    plan_familiar_ident +
+    pre_aborto_anticoncep,
   design = data_survey,
   family = poisson(link="log")
 )
@@ -130,20 +130,24 @@ exp(confint.default(model_3))
 model_4 <- svyglm(
   as.numeric(post_aborto_anticoncep) ~ 
     estado_civil +
-    edad +
     plan_familiar_ident +
-    pre_aborto_anticoncep,
+    pre_aborto_anticoncep +
+    etnia_identificador,
   design = data_survey,
   family = poisson(link="log")
 )
 
+exp(coef(model_4))
+exp(confint.default(model_4))
+
 model_5 <- svyglm(
   as.numeric(post_aborto_anticoncep) ~ 
     estado_civil +
-    edad +
     plan_familiar_ident +
     pre_aborto_anticoncep +
-    etnia_identificador,
+    etnia_identificador +
+    educacion_agrupado +
+    religion,
   design = data_survey,
   family = poisson(link="log")
 )
@@ -154,29 +158,13 @@ exp(confint.default(model_5))
 model_6 <- svyglm(
   as.numeric(post_aborto_anticoncep) ~ 
     estado_civil +
-    edad +
-    plan_familiar_ident +
-    pre_aborto_anticoncep +
-    etnia_identificador +
-    educacion_agrupado +
-    religion,
+    pre_aborto_anticoncep,
   design = data_survey,
   family = poisson(link="log")
 )
 
 exp(coef(model_6))
 exp(confint.default(model_6))
-
-model_7 <- svyglm(
-  as.numeric(post_aborto_anticoncep) ~ 
-    estado_civil +
-    pre_aborto_anticoncep,
-  design = data_survey,
-  family = poisson(link="log")
-)
-
-exp(coef(model_7))
-exp(confint.default(model_7))
 
 # 3. Create a summary table for the models:
 # Función personalizada para extraer resultados con CI
@@ -203,7 +191,7 @@ tabla_modelos_1 <- tbl_regression(
   model_1,
   exponentiate = TRUE,
   label = list(
-    edad ~ "Edad"
+    estado_civil ~ "Estado civil"
   ),
   tidy_fun = tidy_custom
 ) |>
@@ -224,7 +212,7 @@ tabla_modelos_2 <- tbl_regression(
   exponentiate = TRUE,
   label = list(
     estado_civil ~ "Estado civil",
-    edad ~ "Edad"
+    plan_familiar_ident ~ "Usa método de planificación familiar"
   ),
   tidy_fun = tidy_custom
 ) |>
@@ -245,8 +233,8 @@ tabla_modelos_3 <- tbl_regression(
   exponentiate = TRUE,
   label = list(
     estado_civil ~ "Estado civil",
-    edad ~ "Edad",
-    plan_familiar_ident ~ "Usa método de planificación familiar"
+    plan_familiar_ident ~ "Usa método de planificación familiar",
+    pre_aborto_anticoncep ~ "Uso de anticonceptivos pre aborto"
   ),
   tidy_fun = tidy_custom
 ) |>
@@ -267,8 +255,8 @@ tabla_modelos_4 <- tbl_regression(
   exponentiate = TRUE,
   label = list(
     estado_civil ~ "Estado civil",
-    edad ~ "Edad",
     plan_familiar_ident ~ "Usa método de planificación familiar",
+    etnia_identificador ~ "Identificación étnica",
     pre_aborto_anticoncep ~ "Uso de anticonceptivos pre aborto"
   ),
   tidy_fun = tidy_custom
@@ -290,31 +278,6 @@ tabla_modelos_5 <- tbl_regression(
   exponentiate = TRUE,
   label = list(
     estado_civil ~ "Estado civil",
-    edad ~ "Edad",
-    plan_familiar_ident ~ "Usa método de planificación familiar",
-    etnia_identificador ~ "Identificación étnica",
-    pre_aborto_anticoncep ~ "Uso de anticonceptivos pre aborto"
-  ),
-  tidy_fun = tidy_custom
-) |>
-modify_column_hide(columns = p.value) |>
-modify_header(
-  label ~ "**Variable**",
-  estimate ~ "**RP**") |>
-modify_column_merge(
-    pattern = "{conf.low}, {conf.high}",
-    rows = !is.na(conf.low)
-  ) |>
-modify_footnote(
-  all_stat_cols() ~ "RP: razón de prevalencia; IC: intervalo de confianza.",
-)
-
-tabla_modelos_6 <- tbl_regression(
-  model_6,
-  exponentiate = TRUE,
-  label = list(
-    estado_civil ~ "Estado civil",
-    edad ~ "Edad",
     plan_familiar_ident ~ "Usa método de planificación familiar",
     etnia_identificador ~ "Identificación étnica",
     pre_aborto_anticoncep ~ "Uso de anticonceptivos pre aborto",
@@ -337,9 +300,9 @@ modify_footnote(
 
 tabla_modelos_final <- tbl_merge(
   tbls = list(tabla_modelos_1, tabla_modelos_2, tabla_modelos_3, 
-  tabla_modelos_4, tabla_modelos_5, tabla_modelos_6),
+  tabla_modelos_4, tabla_modelos_5),
   tab_spanner = c("**Modelo 1**", "**Modelo 2**", "**Modelo 3**", 
-  "**Modelo 4**", "**Modelo 5**", "**Modelo 6**")
+  "**Modelo 4**", "**Modelo 5**")
 )
 
 ####################################
